@@ -55,20 +55,33 @@ def not_found():
     return status, response_header, data
 
 
+# 定义路由列表
+route_list = [
+    ("/index.html", index),
+    ("/login.html", login)
+]
+
+
 # 处理动态资源请求
 def handle_request(env):
     # 获取动态资源请求路径
     request_path = env["request_path"]
     print("接收到的动态资源请求:", request_path)
 
-    if request_path == "/index.html":
-        # 获取首页数据
-        result = index()
-        return result
-    elif request_path == "/login.html":
-        result = login()
-        return result
-    else:
-        # 没有找到资源
-        result = not_found()
-        return result
+    # 遍历路由列表，选择执行的函数
+    for path, func in route_list:
+        if request_path == path:
+            result = func()
+            return result
+
+    # if request_path == "/index.html":
+    #     # 获取首页数据
+    #     result = index()
+    #     return result
+    # elif request_path == "/login.html":
+    #     result = login()
+    #     return result
+    # else:
+    #     # 没有找到资源
+    #     result = not_found()
+    #     return result
