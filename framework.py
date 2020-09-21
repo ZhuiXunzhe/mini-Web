@@ -12,19 +12,7 @@
 import time
 
 
-# 获取首页数据
-def index():
-    # 响应状态
-    status = "200 OK"
-    # 响应头
-    response_header = [("Server", "PWS2.0")]
-    # 处理后的数据
-    data = time.ctime()
-
-    return status, response_header, data
-
-
-# 获取login页面
+# 获取login数据
 def login():
     # 响应状态
     status = "200 OK"
@@ -34,6 +22,25 @@ def login():
     data = time.ctime()
 
     return status, response_header, data
+
+
+# 获取首页数据
+def index():
+    # 响应状态
+    status = "200 OK"
+    # 响应头
+    response_header = [("Server", "PWS2.0")]
+
+    # 1. 打开模板文件，读取数据
+    with open("template/index.html", "r") as file:
+        file_data = file.read()
+
+    # 处理后的数据, 从数据库查询
+    data = time.ctime()
+    # 2. 替换模板文件中的模板遍历
+    result = file_data.replace("{%content%}", data)
+
+    return status, response_header, result
 
 
 # 没有找到动态资源
