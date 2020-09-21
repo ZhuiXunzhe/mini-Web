@@ -48,7 +48,7 @@ class HttpWebServer(object):
 
         # 获取请求资源的路径
         request_path = request_list[1]
-        print("请求资源路径:",request_path)
+        print("请求资源路径:", request_path)
 
         # 判断请求的是否是根目录，条件成立返回index.html
         if request_path == "/":
