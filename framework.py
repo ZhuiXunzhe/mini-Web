@@ -10,6 +10,7 @@
 内部构造：
 """
 import time
+import pymysql
 
 
 # 定义路由列表
@@ -49,6 +50,7 @@ def login():
 # 获取首页数据
 @route("/index.html")
 def index():
+    print("执行了index函数")
     # 响应状态
     status = "200 OK"
     # 响应头
@@ -59,10 +61,40 @@ def index():
         file_data = file.read()
 
     # 处理后的数据, 从数据库查询
-    data = time.ctime()
+    conn = pymysql.connect(
+        host="10.170.15.41",
+        port=3306,
+        user="root",
+        password="287714",
+        database="stock_db",
+        charset="utf8"
+    )
+
+    # 获取游标
+    cursor = conn.cursor()
+    # 查询sql语句
+    sql = "select * from info;"
+    # 执行sql
+    cursor.execute(sql)
+    # 获取结果集
+    result = cursor.fetchall()
+    # print(result)
+
+    data = ""
+    for row in result:
+        data += '''<tr>
+                    <td>%s</td>
+                    <td>%s</td>
+                    <td>%s</td>
+                    <td>%s</td>
+                    <td>%s</td>
+                    <td>%s</td>
+                    <td>%s</td>
+                    <td>%s</td>
+                   </tr>''' % row
+
     # 2. 替换模板文件中的模板遍历
     result = file_data.replace("{%content%}", data)
-
     return status, response_header, result
 
 
@@ -122,14 +154,17 @@ def handle_request(env):
     print("接收到的动态资源请求:", request_path)
 
     # 遍历路由列表，选择执行的函数
-    for path, func in route_list:
+    for (path, func) in route_list:
         if request_path == path:
+            print("查到了路由")
+            print("路由列表:",route_list)
             result = func()
             return result
-        else:
-            # 没有动态资源
-            result = not_found()
-            return result
+    else:
+        # 没有动态资源
+        print("没查到路由")
+        result = not_found()
+        return result
 
     # if request_path == "/index.html":
     #     # 获取首页数据
