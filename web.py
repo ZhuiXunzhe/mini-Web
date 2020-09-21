@@ -34,22 +34,21 @@ class HttpWebServer(object):
         # 代码执行至此说明连接已经建立成功
         recv_client_data = new_socket.recv(4096)
         if len(recv_client_data) == 0:
-            # print("浏览器已经关闭了")
+            print("浏览器已经关闭了")
             # 关闭连接的套接字
             new_socket.close()
-            print("已关闭连接套接字...")
             return
 
         # 收到的数据长度不为零，正常处理请求
         # 对二进制数据进行解码
         recv_client_content = recv_client_data.decode("utf-8")
-        # print(recv_client_content)
+        print(recv_client_content)
         # 根据指定字符串进行分割，最大分割次数指定2
         request_list = recv_client_content.split(" ", maxsplit=2)
 
         # 获取请求资源的路径
         request_path = request_list[1]
-        print("请求资源路径:", request_path + "--end" )
+        print("请求资源路径:", request_path)
 
         # 判断请求的是否是根目录，条件成立返回index.html
         if request_path == "/":
@@ -60,7 +59,7 @@ class HttpWebServer(object):
             """动态资源移交给框架处理"""
             # 字典存储用户的请求数据
             env = {
-                "request_path": request_path
+                "request_path":request_path
             }
             # 获取处理结果
             status, headers, response_body = framework.handle_request(env)
@@ -75,7 +74,7 @@ class HttpWebServer(object):
                 response_header += "%s:%s\r\n" % header
 
             # 拼接报文
-            response_data = (response_line + response_header+"\r\n" + response_body).encode("utf-8")
+            response_data = (response_line+ response_header+"\r\n" + response_body).encode("utf-8")
             # 发送数据
             new_socket.send(response_data)
             # 关闭连接
